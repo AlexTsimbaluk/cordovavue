@@ -14,6 +14,7 @@
     "cordova-build": "npm run build && cordova build",
     "cordova-run": "npm run build && cordova run browser",
     "cordova-run-android": "npm run build && cordova run android",
+    "cordova-run-all": "npm run build && cordova run android",
     "gulp": "gulp"
   },
   "dependencies": {
@@ -44,6 +45,7 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8",
     "html-webpack-plugin": "^2.30.1",
     "inject-loader": "^3.0.0",
     "karma": "^1.4.1",

@@ -4,6 +4,7 @@ platforms
 plugins
 *.txt
 package-lock.json
+www/
 /dist/
 npm-debug.log*
 yarn-debug.log*
