@@ -1,7 +1,7 @@
 'use strict';
 
 var gulp = require('gulp'),
-	browserSync = require('browser-sync'),
+    browserSync = require('browser-sync'),
     exec = require('child_process').exec // для запуска команд в терминале
 ;
 
@@ -12,15 +12,15 @@ var RELOAD_TIMEOUT = 1000;
 // gulp.task('browser-sync', ['webpack-dev','cordova-run'], function() {
 gulp.task('browser-sync', ['cordova-run'], function() {
     setTimeout(() => {
-    	browserSync({
-    		/*server: {
-    			baseDir: 'www'
-    		},*/
-    		proxy: 'localhost:8000',
-    		port: 	9999,
-    		notify: false,
-    		ghostMode: false
-    	});
+        browserSync({
+            /*server: {
+                baseDir: 'www'
+            },*/
+            proxy: 'localhost:8000',
+            port:   9999,
+            notify: false,
+            ghostMode: false
+        });
     }, RELOAD_TIMEOUT);
 });
 
@@ -85,7 +85,7 @@ gulp.task('cordova-run-android', function() {
 });
 
 gulp.task('watch', ['browser-sync'], function() {
-	gulp.watch('src/**/*.*', ['webpack-build']);
+    gulp.watch('src/**/*.*', ['webpack-build']);
 
     // gulp.watch('www/**/*.html', ['deferred-reload']);
     // gulp.watch('www/**/*.js', ['deferred-reload']);
