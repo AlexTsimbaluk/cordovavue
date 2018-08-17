@@ -31,20 +31,25 @@
                     Supply
                 </th>
 
-
-
-                <th rowspan="2">
-                    Quotes
-                </th>
-
                 <th rowspan="2">
                     Updated
                 </th>
+
+                <th class="p_0">
+                    <tr>
+                        <th colspan="3">
+                            Quotes USD
+                        </th>
+
+                        <th colspan="3">
+                            Percent change for
+                        </th>
+                    </tr>
+                </th>
+
             </tr>
 
             <tr>
-                <!-- <th colspan="5"></th> -->
-
                 <th>
                     Circulating
                 </th>
@@ -57,14 +62,49 @@
                     Max
                 </th>
 
-                <!-- <th colspan="2"></th> -->
+                <th class="p_0">
+                    <tr>
+                        <th>
+                            Price
+                        </th>
+
+                        <th>
+                            Volume 24h
+                        </th>
+
+                        <th>
+                            Market cap
+                        </th>
+
+                        <th>
+                            1h
+                        </th>
+
+                        <th>
+                            24h
+                        </th>
+
+                        <th>
+                            7d
+                        </th>
+                    </tr>
+                </th>
             </tr>
 
             <tr
                 v-for="(crypto, index) in cryptos"
             >
                 <td v-for="(value, key) in crypto">{{value}}</td>
+
+                <td>
+                    <tr>
+                        <td v-for="(value, key) in quotes[index]['USD']">
+                            {{ value }}
+                        </td>
+                    </tr>
+                </td>
             </tr>
+
         </table>
     </div>
 </template>
@@ -78,7 +118,8 @@ export default {
     data () {
         return {
             dataRecieved: false,
-            cryptos: null
+            cryptos: {},
+            quotes: {}
         }
     },
     methods: {
@@ -90,37 +131,40 @@ export default {
                 .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id')
                 .then((response) => {
                     try {
-                        let _cryptos = response.data.data;
+                        let data = response.data.data;
 
-                        for (var key in _cryptos) {
-                            let crypto = _cryptos[key];
+                        for (var obj in data) {
+                            let crypto = data[obj];
+
                             for (var key in crypto) {
+                                if (key == 'quotes') {
+                                    let quotes = crypto[key];
+                                    this.quotes[obj] = quotes;
+                                    delete crypto[key];
+                                }
+
                                 if (key == 'last_updated') {
                                     crypto[key] = this.dateFromTimestap(crypto[key]);
                                 }
-
-                                if (key == 'quotes') {
-                                    let quotes = crypto[key];
-                                    for (var key in quotes) {
-                                        console.log(quotes[key]);
-                                    }
-                                }
                             }
+
+                            this.cryptos[obj] = crypto;
                         }
 
-                        this.cryptos = _cryptos;
                         this.dataRecieved = true;
+                        console.log('Request::Success');
+
+                        console.log(this.quotes[9]);
+                        for (var key in this.quotes[9]) {
+                            console.log(this.quotes[9][key]);
+                        }
                     } catch(e) {
                         console.log('Error::No response');
                         throw new Error(e);
-                        $('#app').addClass('js-error error-no-response-data');
-                        $('body').append('<div>Data from Database failed');
                     }
                 })
                 .catch((error) => {
                     console.log('Error::не удалось создать ajax-запрос');
-                    $('body').append('<div>Ajax failed');
-                    $('#app').addClass('js-error error-ajax-query');
                     console.log(error)
                 });
         }
@@ -131,7 +175,7 @@ export default {
         setInterval(() => {
             console.log('::Updated');
             this.getData();
-        }, 30000);
+        }, 10000);
     }
 }
 </script>
@@ -166,7 +210,14 @@ th {
     padding: 5px;
     text-align: left;
 }
+th tr th {
+    border-top: 0;
+    border-bottom: 0;
+}
 td {
     padding: 5px;
+}
+.p_0 {
+    padding: 0;
 }
 </style>
