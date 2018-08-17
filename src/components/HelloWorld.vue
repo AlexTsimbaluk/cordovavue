@@ -197,8 +197,9 @@ a {
 }
 
 table {
-    border-collapse: collapse;
     border: 1px solid #333;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 tr {
