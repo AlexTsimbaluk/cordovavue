@@ -35,16 +35,12 @@
                     Updated
                 </th>
 
-                <th class="p_0">
-                    <tr>
-                        <th colspan="3">
-                            Quotes USD
-                        </th>
+                <th colspan="3">
+                    Quotes USD
+                </th>
 
-                        <th colspan="3">
-                            Percent change for
-                        </th>
-                    </tr>
+                <th colspan="3">
+                    Percent change for
                 </th>
 
             </tr>
@@ -62,47 +58,35 @@
                     Max
                 </th>
 
-                <th class="p_0">
-                    <tr>
-                        <th>
-                            Price
-                        </th>
+                <th>
+                    Price
+                </th>
 
-                        <th>
-                            Volume 24h
-                        </th>
+                <th>
+                    Volume 24h
+                </th>
 
-                        <th>
-                            Market cap
-                        </th>
+                <th>
+                    Market cap
+                </th>
 
-                        <th>
-                            1h
-                        </th>
+                <th>
+                    1h
+                </th>
 
-                        <th>
-                            24h
-                        </th>
+                <th>
+                    24h
+                </th>
 
-                        <th>
-                            7d
-                        </th>
-                    </tr>
+                <th>
+                    7d
                 </th>
             </tr>
 
             <tr
-                v-for="(crypto, index) in cryptos"
+                v-for="(crypto, key) in cryptos"
             >
                 <td v-for="(value, key) in crypto">{{value}}</td>
-
-                <td>
-                    <tr>
-                        <td v-for="(value, key) in quotes[index]['USD']">
-                            {{ value }}
-                        </td>
-                    </tr>
-                </td>
             </tr>
 
         </table>
@@ -119,7 +103,7 @@ export default {
         return {
             dataRecieved: false,
             cryptos: {},
-            quotes: {}
+            // quotes: {}
         }
     },
     methods: {
@@ -138,9 +122,34 @@ export default {
 
                             for (var key in crypto) {
                                 if (key == 'quotes') {
-                                    let quotes = crypto[key];
-                                    this.quotes[obj] = quotes;
+                                    let quote = crypto[key]['USD'];
                                     delete crypto[key];
+
+                                    for (var name in quote) {
+                                        if (name == 'price') {
+                                            crypto['price'] = quote[name];
+                                        }
+
+                                        if (name == 'volume_24h') {
+                                            crypto['volume_24h'] = quote[name];
+                                        }
+
+                                        if (name == 'market_cap') {
+                                            crypto['market_cap'] = quote[name];
+                                        }
+
+                                        if (name == 'percent_change_1h') {
+                                            crypto['percent_change_1h'] = quote[name];
+                                        }
+
+                                        if (name == 'percent_change_24h') {
+                                            crypto['percent_change_24h'] = quote[name];
+                                        }
+
+                                        if (name == 'percent_change_7d') {
+                                            crypto['percent_change_7d'] = quote[name];
+                                        }
+                                    }
                                 }
 
                                 if (key == 'last_updated') {
@@ -148,16 +157,14 @@ export default {
                                 }
                             }
 
-                            this.cryptos[obj] = crypto;
+                            // this.cryptos[obj] = crypto;
                         }
+                        this.cryptos = data;;
 
                         this.dataRecieved = true;
                         console.log('Request::Success');
 
-                        console.log(this.quotes[9]);
-                        for (var key in this.quotes[9]) {
-                            console.log(this.quotes[9][key]);
-                        }
+                        console.log(this.cryptos[1]);
                     } catch(e) {
                         console.log('Error::No response');
                         throw new Error(e);
@@ -173,9 +180,14 @@ export default {
         this.getData();
 
         setInterval(() => {
-            console.log('::Updated');
             this.getData();
         }, 10000);
+    },
+    beforeUpdate () {
+        console.log('::beforeUpdate');
+    },
+    updated () {
+        console.log('::updated');
     }
 }
 </script>
