@@ -19,9 +19,9 @@
                     Symbol
                 </th>
 
-                <th rowspan="2">
+                <!-- <th rowspan="2">
                     Site
-                </th>
+                </th> -->
 
                 <th rowspan="2">
                     Rank
@@ -103,7 +103,7 @@ export default {
         return {
             dataRecieved: false,
             cryptos: {},
-            // quotes: {}
+            __cryptos: {}
         }
     },
     methods: {
@@ -112,7 +112,7 @@ export default {
         },
         getData () {
             axios
-                .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id')
+                .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id&limit=1')
                 .then((response) => {
                     try {
                         let data = response.data.data;
@@ -121,6 +121,10 @@ export default {
                             let crypto = data[obj];
 
                             for (var key in crypto) {
+                                if (key == 'website_slug') {
+                                    delete crypto[key];
+                                }
+
                                 if (key == 'quotes') {
                                     let quote = crypto[key]['USD'];
                                     delete crypto[key];
@@ -157,14 +161,22 @@ export default {
                                 }
                             }
 
-                            // this.cryptos[obj] = crypto;
+                            if (this.cryptos[obj] == undefined) {
+                                console.log('First request');
+                            } else {
+                                console.log('Repeat request');
+                                if (crypto['price'] != this.cryptos[obj]['price']) {
+                                    console.log('Data updated');
+                                    console.log(crypto['price']);
+                                    console.log(this.cryptos[obj]['price']);
+                                }
+                            }
                         }
-                        this.cryptos = data;;
 
+                        this.cryptos = data;
                         this.dataRecieved = true;
-                        console.log('Request::Success');
 
-                        console.log(this.cryptos[1]);
+                        console.log('Request::Success');
                     } catch(e) {
                         console.log('Error::No response');
                         throw new Error(e);
@@ -184,10 +196,10 @@ export default {
         }, 10000);
     },
     beforeUpdate () {
-        console.log('::beforeUpdate');
+        // console.log('::beforeUpdate');
     },
     updated () {
-        console.log('::updated');
+        // console.log('::updated');
     }
 }
 </script>
