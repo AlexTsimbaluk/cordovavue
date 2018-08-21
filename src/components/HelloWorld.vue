@@ -112,7 +112,7 @@ export default {
         },
         getData () {
             axios
-                .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id&limit=1')
+                .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id')
                 .then((response) => {
                     try {
                         let data = response.data.data;
@@ -164,7 +164,6 @@ export default {
                             if (this.cryptos[obj] == undefined) {
                                 console.log('First request');
                             } else {
-                                console.log('Repeat request');
                                 if (crypto['price'] != this.cryptos[obj]['price']) {
                                     console.log('Data updated');
                                     console.log(crypto['price']);
