@@ -86,8 +86,20 @@
             <tr
                 v-for="(crypto, key) in cryptos"
             >
-                <td v-for="(value, key) in crypto">{{value}}</td>
+                <td
+                    v-for="(value, key) in crypto"
+                >{{value}}</td>
             </tr>
+
+            <div
+                v-if="prevCreated"
+            >
+                <tr
+                    v-for="(crypto, key) in __cryptos"
+                >
+                    <td v-for="(value, key) in crypto">{{value}}</td>
+                </tr>
+            </div>
 
         </table>
     </div>
@@ -102,8 +114,12 @@ export default {
     data () {
         return {
             dataRecieved: false,
+            // свежие данные
             cryptos: {},
+            // предыдущие данные
             __cryptos: {},
+            // свойство указывает на то, был ли создан __cryptos
+            prevCreated: false,
             start: 0
         }
     },
@@ -116,6 +132,23 @@ export default {
         },
         createTemp () {
             this.__cryptos = this.cryptos;
+
+            for (var obj in this.__cryptos) {
+                let crypto = this.__cryptos[obj];
+
+                for (var key in crypto) {
+                    if (key == 'id') delete crypto[key];
+                    if (key == 'name') delete crypto[key];
+                    if (key == 'symbol') delete crypto[key];
+                    if (key == 'rank') delete crypto[key];
+                    if (key == 'circulating_supply') delete crypto[key];
+                    if (key == 'max_supply') delete crypto[key];
+                    if (key == 'total_supply') delete crypto[key];
+                    if (key == 'last_updated') delete crypto[key];
+                }
+            }
+
+            this.prevCreated = true;
         },
         getData () {
             axios
@@ -179,18 +212,22 @@ export default {
 
                                     this.createTemp();
 
-                                    for (var key in crypto) {
+                                    // for (var key in crypto) {
+                                    for (var key in this.__cryptos[obj]) {
                                         let val = crypto[key];
                                         let __val = this.__cryptos[obj][key];
+
+                                        console.log(__val);
+                                        console.log(val);
+
                                         let diff = val - __val;
-                                        if (key == 'price') {
-                                            if (diff > 0) {
-                                                console.log('up');
-                                            } else if (diff < 0) {
-                                                console.log('down');
-                                            } else {
-                                                console.log('not changed');
-                                            }
+
+                                        if (diff > 0) {
+                                            console.log(key + ' - up');
+                                        } else if (diff < 0) {
+                                            console.log(key + ' - down');
+                                        } else {
+                                            console.log(key + ' - not changed');
                                         }
                                     }
                                 }
@@ -199,18 +236,6 @@ export default {
 
                         this.cryptos = data;
                         this.dataRecieved = true;
-
-                        for (var obj in this.cryptos) {
-                            let crypto = this.cryptos[obj];
-
-                            for (var key in crypto) {
-                                /*if (key == 'price') {
-                                    if (crypto[key] > this.__cryptos[obj][key]) {
-                                        console.log('price grow');
-                                    }
-                                }*/
-                            }
-                        }
                     } catch(e) {
                         console.log('Error::No response');
                         throw new Error(e);
