@@ -91,7 +91,7 @@
                 >{{value}}</td>
             </tr>
 
-            <div
+            <!-- <div
                 v-if="prevCreated"
             >
                 <tr
@@ -99,8 +99,7 @@
                 >
                     <td v-for="(value, key) in crypto">{{value}}</td>
                 </tr>
-            </div>
-
+            </div> -->
         </table>
     </div>
 </template>
