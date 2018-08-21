@@ -103,16 +103,23 @@ export default {
         return {
             dataRecieved: false,
             cryptos: {},
-            __cryptos: {}
+            __cryptos: {},
+            start: 0
         }
     },
     methods: {
         dateFromTimestap (sec) {
             return new Date(sec * 1e3).toISOString().slice(-13, -5);
         },
+        getInterval (sec) {
+            return Math.round(sec / 1000);
+        },
+        createTemp () {
+            this.__cryptos = this.cryptos;
+        },
         getData () {
             axios
-                .get(' https://api.coinmarketcap.com/v2/ticker/?sort=id')
+                .get('https://api.coinmarketcap.com/v2/ticker/?sort=id&limit=1')
                 .then((response) => {
                     try {
                         let data = response.data.data;
@@ -131,27 +138,27 @@ export default {
 
                                     for (var name in quote) {
                                         if (name == 'price') {
-                                            crypto['price'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
 
                                         if (name == 'volume_24h') {
-                                            crypto['volume_24h'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
 
                                         if (name == 'market_cap') {
-                                            crypto['market_cap'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
 
                                         if (name == 'percent_change_1h') {
-                                            crypto['percent_change_1h'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
 
                                         if (name == 'percent_change_24h') {
-                                            crypto['percent_change_24h'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
 
                                         if (name == 'percent_change_7d') {
-                                            crypto['percent_change_7d'] = quote[name];
+                                            crypto[name] = quote[name];
                                         }
                                     }
                                 }
@@ -165,9 +172,27 @@ export default {
                                 console.log('First request');
                             } else {
                                 if (crypto['price'] != this.cryptos[obj]['price']) {
+                                    let end = Date.now()
                                     console.log('Data updated');
-                                    console.log(crypto['price']);
-                                    console.log(this.cryptos[obj]['price']);
+                                    console.log(this.getInterval(end - this.start) + 'sec from previous update');
+                                    this.start = end;
+
+                                    this.createTemp();
+
+                                    for (var key in crypto) {
+                                        let val = crypto[key];
+                                        let __val = this.__cryptos[obj][key];
+                                        let diff = val - __val;
+                                        if (key == 'price') {
+                                            if (diff > 0) {
+                                                console.log('up');
+                                            } else if (diff < 0) {
+                                                console.log('down');
+                                            } else {
+                                                console.log('not changed');
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -175,7 +200,17 @@ export default {
                         this.cryptos = data;
                         this.dataRecieved = true;
 
-                        console.log('Request::Success');
+                        for (var obj in this.cryptos) {
+                            let crypto = this.cryptos[obj];
+
+                            for (var key in crypto) {
+                                /*if (key == 'price') {
+                                    if (crypto[key] > this.__cryptos[obj][key]) {
+                                        console.log('price grow');
+                                    }
+                                }*/
+                            }
+                        }
                     } catch(e) {
                         console.log('Error::No response');
                         throw new Error(e);
@@ -188,11 +223,12 @@ export default {
         }
     },
     created () {
+        this.start = Date.now();
         this.getData();
 
         setInterval(() => {
             this.getData();
-        }, 10000);
+        }, 1000);
     },
     beforeUpdate () {
         // console.log('::beforeUpdate');
