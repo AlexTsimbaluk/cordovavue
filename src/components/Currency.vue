@@ -1,5 +1,5 @@
 <template>
-    <tr>
+    <!-- <tr>
         <value
             :value="crypto.id"
         ></value>
@@ -34,7 +34,7 @@
 
         <value
             :value="crypto.price"
-            :class="diff.price"
+            :prev="prev.price"
         ></value>
 
         <value
@@ -56,6 +56,15 @@
         <value
             :value="crypto.percent_change_7d"
         ></value>
+    </tr> -->
+
+    <tr>
+        <value
+            v-for="(val, key) in crypto"
+            :value="crypto[key]"
+            :prev="prev[key]"
+            :key="key"
+        ></value>
     </tr>
 </template>
 
@@ -69,7 +78,7 @@ export default {
     },
     props: {
         crypto: Object,
-        diff: Object
+        prev: Object
     }
 }
 </script>

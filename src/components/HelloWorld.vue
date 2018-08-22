@@ -19,10 +19,6 @@
                     Symbol
                 </th>
 
-                <!-- <th rowspan="2">
-                    Site
-                </th> -->
-
                 <th rowspan="2">
                     Rank
                 </th>
@@ -88,21 +84,10 @@
             >
                 <currency
                     :crypto="crypto"
-                    :diff="prevCreated ? __cryptos[key] : {}"
+                    :prev="prevCreated ? __cryptos[key] : {}"
+                    :key="crypto['name']"
                 ></currency>
-                <!--
-                -->
             </template>
-
-            <!-- <div
-                v-if="prevCreated"
-            >
-                <tr
-                    v-for="(crypto, key) in __cryptos"
-                >
-                    <td v-for="(value, key) in crypto">{{value}}</td>
-                </tr>
-            </div> -->
         </table>
 
     </div>
@@ -160,7 +145,7 @@ export default {
         },
         getData () {
             axios
-                .get('https://api.coinmarketcap.com/v2/ticker/?sort=id&limit=1')
+                .get('https://api.coinmarketcap.com/v2/ticker/')
                 .then((response) => {
                     try {
                         let data = response.data.data;
@@ -210,12 +195,12 @@ export default {
                             }
 
                             if (this.cryptos[obj] == undefined) {
-                                console.log('First request');
+                                // console.log('First request');
                             } else {
+                                // Data updated
                                 if (crypto['price'] != this.cryptos[obj]['price']) {
                                     let end = Date.now()
-                                    console.log('Data updated');
-                                    console.log(this.getInterval(end - this.start) + 'sec from previous update');
+                                    console.log(this.getInterval(end - this.start) + ' sec from previous update');
                                     this.start = end;
 
                                     this.createTemp();
@@ -224,17 +209,17 @@ export default {
                                         let val = crypto[key];
                                         let __val = this.__cryptos[obj][key];
 
-                                        console.log(__val);
-                                        console.log(val);
+                                        // console.log(__val);
+                                        // console.log(val);
 
                                         let diff = val - __val;
 
                                         if (diff > 0) {
-                                            console.log(key + ' - up');
+                                            // console.log(key + ' - up');
                                         } else if (diff < 0) {
-                                            console.log(key + ' - down');
+                                            // console.log(key + ' - down');
                                         } else {
-                                            console.log(key + ' - not changed');
+                                            // console.log(key + ' - not changed');
                                         }
                                     }
                                 }
