@@ -83,13 +83,16 @@
                 </th>
             </tr>
 
-            <tr
+            <template
                 v-for="(crypto, key) in cryptos"
             >
-                <td
-                    v-for="(value, key) in crypto"
-                >{{value}}</td>
-            </tr>
+                <currency
+                    :crypto="crypto"
+                    :diff="prevCreated ? __cryptos[key] : {}"
+                ></currency>
+                <!--
+                -->
+            </template>
 
             <!-- <div
                 v-if="prevCreated"
@@ -101,6 +104,7 @@
                 </tr>
             </div> -->
         </table>
+
     </div>
 </template>
 
@@ -108,8 +112,13 @@
 import $ from 'jquery';
 import axios from 'axios';
 
+import Currency from '@/components/Currency';
+
 export default {
     name: 'HelloWorld',
+    components: {
+        Currency
+    },
     data () {
         return {
             dataRecieved: false,
@@ -211,7 +220,6 @@ export default {
 
                                     this.createTemp();
 
-                                    // for (var key in crypto) {
                                     for (var key in this.__cryptos[obj]) {
                                         let val = crypto[key];
                                         let __val = this.__cryptos[obj][key];
@@ -234,6 +242,9 @@ export default {
                         }
 
                         this.cryptos = data;
+                        /*if (!this.prevCreated) {
+                            this.createTemp();
+                        }*/
                         this.dataRecieved = true;
                     } catch(e) {
                         console.log('Error::No response');
@@ -252,7 +263,7 @@ export default {
 
         setInterval(() => {
             this.getData();
-        }, 1000);
+        }, 15000);
     },
     beforeUpdate () {
         // console.log('::beforeUpdate');
@@ -264,7 +275,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 h1, h2 {
   font-weight: normal;
 }
